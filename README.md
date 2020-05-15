@@ -11,6 +11,7 @@ module "security" {
 ```
 
 NOTE: you MUST enable recording for the generated AWS Config recorder via the AWS Console GUI, as terraform cannot do that for you. You only need to do this once.
+NOTE: all services added by this module are only added to the region that your manifest specifies for the AWS provider. Ex. AWS Config only cares about the region you're in when you're in the AWS Console UI. The same applies for the terraform additions.
 
 ## Variables
 
