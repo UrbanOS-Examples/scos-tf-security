@@ -14,16 +14,6 @@ resource "aws_securityhub_account" "default" {
   ]
 }
 
-resource "aws_securityhub_product_subscription" "inspector" {
-  depends_on  = ["aws_securityhub_account.default"]
-  product_arn = "arn:aws:securityhub:${data.aws_region.current.name}::product/aws/inspector"
-}
-
-resource "aws_securityhub_product_subscription" "guardduty" {
-  depends_on  = ["aws_securityhub_account.default"]
-  product_arn = "arn:aws:securityhub:${data.aws_region.current.name}::product/aws/guardduty"
-}
-
 resource "aws_securityhub_standards_subscription" "aws_foundational" {
   depends_on    = ["aws_securityhub_account.default"]
   standards_arn = "arn:aws:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
