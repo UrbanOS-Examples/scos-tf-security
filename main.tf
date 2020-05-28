@@ -3,6 +3,10 @@ variable "force_destroy_s3_bucket" {
   default       = false
 }
 
+variable "alert_handler_sns_topic_arn" {
+  description = "An alert handler topic ARN for sending alerts"
+}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
@@ -37,6 +41,25 @@ resource "aws_securityhub_standards_subscription" "cis" {
 
 resource "aws_guardduty_detector" "default" {
   enable = true
+}
+
+resource "aws_cloudwatch_event_rule" "guardduty" {
+  name        = "${terraform.workspace}-guardduty"
+  description = "Capture whenever a GuardDuty event is seen"
+
+  event_pattern = <<PATTERN
+{
+  "source": [
+    "aws.guardduty"
+  ]
+}
+PATTERN
+}
+
+resource "aws_cloudwatch_event_target" "guardduty_to_sns" {
+  rule      = "${aws_cloudwatch_event_rule.guardduty.name}"
+  target_id = "GuardDutyToSNS"
+  arn       = "${var.alert_handler_sns_topic_arn}"
 }
 
 resource "aws_iam_service_linked_role" "config" {
