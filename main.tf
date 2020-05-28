@@ -24,6 +24,21 @@ resource "aws_securityhub_standards_subscription" "cis" {
   standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
 }
 
+# THESE CREATE MAJOR FLAKINESS AND ARE ON BY DEFAULT. LEAVING HERE FOR REFERENCE
+# resource "aws_securityhub_product_subscription" "inspector" {
+#   depends_on  = ["aws_securityhub_account.default"]
+#   product_arn = "arn:aws:securityhub:${data.aws_region.current.name}::product/aws/inspector"
+# }
+
+# resource "aws_securityhub_product_subscription" "guardduty" {
+#   depends_on  = ["aws_securityhub_account.default"]
+#   product_arn = "arn:aws:securityhub:${data.aws_region.current.name}::product/aws/guardduty"
+# }
+
+resource "aws_guardduty_detector" "default" {
+  enable = true
+}
+
 resource "aws_iam_service_linked_role" "config" {
   aws_service_name = "config.amazonaws.com"
 }
