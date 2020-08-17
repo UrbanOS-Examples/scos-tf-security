@@ -39,10 +39,6 @@ resource "aws_securityhub_standards_subscription" "cis" {
 #   product_arn = "arn:aws:securityhub:${data.aws_region.current.name}::product/aws/guardduty"
 # }
 
-resource "aws_guardduty_detector" "default" {
-  enable = true
-}
-
 resource "aws_cloudwatch_event_rule" "guardduty" {
   name        = "${terraform.workspace}-guardduty"
   description = "Capture whenever a GuardDuty event is seen"
@@ -108,9 +104,9 @@ resource "aws_s3_bucket_public_access_block" "config" {
 
 resource "aws_s3_bucket_policy" "config" {
   depends_on     = ["aws_s3_bucket_public_access_block.config"]
-  
+
   bucket = "${aws_s3_bucket.config.id}"
-  
+
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -154,3 +150,4 @@ resource "aws_s3_bucket_policy" "config" {
 }
 POLICY
 }
+
