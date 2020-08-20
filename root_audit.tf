@@ -16,6 +16,7 @@ resource "aws_cloudtrail" "root_trail" {
 
 resource "aws_cloudwatch_log_group" "root_trail" {
   name = "root-trail"
+  retention_in_days = "90"
 }
 
 resource "aws_cloudwatch_log_metric_filter" "root_filter" {
