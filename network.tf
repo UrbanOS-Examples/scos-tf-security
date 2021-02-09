@@ -3,11 +3,11 @@ variable "vpc_id" {
 }
 
 data "aws_network_acls" "default" {
-  vpc_id = "${var.vpc_id}"
+  vpc_id = var.vpc_id
 }
 
 resource "aws_default_network_acl" "default" {
-  default_network_acl_id = "${data.aws_network_acls.default.ids[0]}"
+  default_network_acl_id = data.aws_network_acls.default.ids[0]
 
   ingress {
     protocol   = "-1"
@@ -46,10 +46,11 @@ resource "aws_default_network_acl" "default" {
   }
 
   tags = {
-    Name = "${terraform.workspace}"
+    Name = terraform.workspace
   }
 
   lifecycle {
-    ignore_changes = ["subnet_ids"]
+    ignore_changes = [subnet_ids]
   }
 }
+
