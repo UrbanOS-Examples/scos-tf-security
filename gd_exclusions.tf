@@ -5,7 +5,7 @@ variable "exclusion_rule_count" {
 
 variable "exclusion_rules" {
   description = "The basic details for GuardDuty exclusion rules"
-  type        = list(string)
+  type        = list(map(string))
   default     = []
   /*
    Should be maps in this example form (note that criterion must be a json string b/c tf 0.11.0 does not deal with nested maps well):

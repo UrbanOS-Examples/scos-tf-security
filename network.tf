@@ -7,7 +7,7 @@ data "aws_network_acls" "default" {
 }
 
 resource "aws_default_network_acl" "default" {
-  default_network_acl_id = data.aws_network_acls.default.ids[0]
+  default_network_acl_id = data.aws_network_acls.default.outputs.ids[0]
 
   ingress {
     protocol   = "-1"
