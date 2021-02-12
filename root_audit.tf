@@ -9,7 +9,7 @@ resource "aws_cloudtrail" "root_trail" {
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_log_file_validation    = true
-  cloud_watch_logs_group_arn    = aws_cloudwatch_log_group.root_trail.arn
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.root_trail.arn}:*"
   cloud_watch_logs_role_arn     = aws_iam_role.root_trail_iam_role.arn
   depends_on                    = [aws_s3_bucket_policy.root_trail_bucket_policy]
 }
