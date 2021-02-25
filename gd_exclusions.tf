@@ -5,9 +5,8 @@ variable "exclusion_rule_count" {
 
 variable "exclusion_rules" {
   description = "The basic details for GuardDuty exclusion rules"
-  type        = "list"
+  type        = list(map(string))
   default     = []
-
   /*
    Should be maps in this example form (note that criterion must be a json string b/c tf 0.11.0 does not deal with nested maps well):
    {"name" = "one", "description" = "one", "criterion" = jsonencode({"severity" = {"Gte" = 0}, "region" = {"Eq" = ["us-west-2", "us-east-2"]}})}
@@ -22,8 +21,8 @@ resource "aws_guardduty_detector" "default" {
 }
 
 resource "aws_cloudformation_stack" "guard_duty_exclusions" {
-  count         = "${var.exclusion_rule_count}"
-  name          = "guard-duty-exclusion-${terraform.workspace}-${count.index}"
+  count = var.exclusion_rule_count
+  name  = "guard-duty-exclusion-${terraform.workspace}-${count.index}"
   template_body = <<EOF
 ---
 AWSTemplateFormatVersion: "2010-09-09"
@@ -33,11 +32,21 @@ Resources:
     Type: AWS::GuardDuty::Filter
     Properties:
       Action: ARCHIVE
-      Name: ${lookup(var.exclusion_rules[count.index], "name", "${terraform.workspace}-rule-${count.index}")}
-      Description: ${lookup(var.exclusion_rules[count.index], "description", "${terraform.workspace}-rule-description-${count.index}")}
+      Name: ${lookup(
+        var.exclusion_rules[count.index],
+        "name",
+        "${terraform.workspace}-rule-${count.index}",
+      )}
+      Description: ${lookup(
+        var.exclusion_rules[count.index],
+        "description",
+        "${terraform.workspace}-rule-description-${count.index}",
+      )}
       DetectorId: ${aws_guardduty_detector.default.id}
       FindingCriteria:
         Criterion: ${lookup(var.exclusion_rules[count.index], "criterion", "{}")}
       Rank: ${count.index + 1}
 EOF
+
 }
+

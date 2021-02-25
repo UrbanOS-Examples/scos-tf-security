@@ -1,13 +1,9 @@
-variable "vpc_id" {
-  description = "The ID of the main account or environment VPC for applying network security"
-}
-
-data "aws_network_acls" "default" {
-  vpc_id = "${var.vpc_id}"
+variable "default_network_acl_id" {
+  description = "The ID of the default acl for the vpc to attach the network acl to"
 }
 
 resource "aws_default_network_acl" "default" {
-  default_network_acl_id = "${data.aws_network_acls.default.ids[0]}"
+  default_network_acl_id = var.default_network_acl_id
 
   ingress {
     protocol   = "-1"
@@ -46,10 +42,11 @@ resource "aws_default_network_acl" "default" {
   }
 
   tags = {
-    Name = "${terraform.workspace}"
+    Name = terraform.workspace
   }
 
   lifecycle {
-    ignore_changes = ["subnet_ids"]
+    ignore_changes = [subnet_ids]
   }
 }
+
