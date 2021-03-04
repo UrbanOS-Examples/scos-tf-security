@@ -63,6 +63,7 @@ resource "aws_cloudwatch_event_target" "guardduty_to_sns" {
 
 resource "aws_iam_service_linked_role" "config" {
   aws_service_name = "config.amazonaws.com"
+  custom_suffix    = terraform.workspace
 }
 
 resource "aws_config_configuration_recorder" "default" {
