@@ -7,15 +7,6 @@ variable "alert_handler_sns_topic_arn" {
   description = "An alert handler topic ARN for sending alerts"
 }
 
-variable "sandbox" {
-  description = "Enables scos-tf-security to account for account-unique Service Linked Roles and the S3 bucket name for configs"
-  default     = false
-}
-
-variable "service_linked_role_arn_config" {
-  description = "(Sandbox Only) Role ARN for the Service Linked Role for the AWS Config Service"
-}
-
 data "aws_caller_identity" "current" {
 }
 
@@ -71,13 +62,13 @@ resource "aws_cloudwatch_event_target" "guardduty_to_sns" {
 }
 
 resource "aws_iam_service_linked_role" "config" {
-  count = var.sandbox ? 0 : 1
   aws_service_name = "config.amazonaws.com"
+  custom_suffix    = terraform.workspace
 }
 
 resource "aws_config_configuration_recorder" "default" {
   name     = "default"
-  role_arn = var.sandbox ? var.service_linked_role_arn_config : aws_iam_service_linked_role.config[0].arn
+  role_arn = aws_iam_service_linked_role.config.arn
 
   recording_group {
     all_supported                 = true
@@ -92,7 +83,7 @@ resource "aws_config_delivery_channel" "default" {
 }
 
 resource "aws_s3_bucket" "config" {
-  bucket = var.sandbox ? "${terraform.workspace}-config-bucket-${data.aws_caller_identity.current.account_id}" : "config-bucket-${data.aws_caller_identity.current.account_id}"
+  bucket = "config-bucket-${data.aws_caller_identity.current.account_id}"
   acl    = "private"
 
   force_destroy = var.force_destroy_s3_bucket
