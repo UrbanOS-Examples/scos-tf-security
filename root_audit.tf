@@ -102,7 +102,7 @@ resource "aws_iam_policy" "root_trail_iam_policy" {
         "logs:CreateLogStream"
       ],
       "Resource": [
-        "${aws_cloudwatch_log_group.root_trail.arn}"
+        "${aws_cloudwatch_log_group.root_trail.arn}:*"
       ]
     },
     {
@@ -112,7 +112,7 @@ resource "aws_iam_policy" "root_trail_iam_policy" {
         "logs:PutLogEvents"
       ],
       "Resource": [
-        "${aws_cloudwatch_log_group.root_trail.arn}"
+        "${aws_cloudwatch_log_group.root_trail.arn}:*"
       ]
     }
   ]
